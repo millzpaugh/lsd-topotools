@@ -1,0 +1,133 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(2) do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  config.vm.box = "hashicorp/precise64"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder "../LSDTopoTools", "/LSDTopoTools"
+
+  # Settings for VirtualBox
+  # YOU MUST HAVE VIRTUAL BOX FOR THIS TO WORK
+  config.vm.provider "virtualbox" do |vb|
+    # Customize the amount of memory on the VM:
+    # You should adjust this based on your computer's memory
+    # 32 bit machines generally cannot exceed 3GB of memory
+    vb.memory = "3000"
+  end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # This provisions the machine through a shell script
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update
+    
+    # Install git
+    sudo apt-get install -y git
+    
+    # Install gdal
+    sudo apt-get install -y gdal-bin
+    
+    # Install python gdal tools
+    sudo apt-get install -y python-gdal 
+
+    # Install FFTW
+    sudo apt-get install -y libfftw3-dev
+
+    # Install cmake
+    sudo apt-get install -y cmake
+    
+    
+    # Check if parent directories exist
+    if ! [ -d /LSDTopoTools/Git_projects ]
+      then
+        echo "Need to make the Git projects folder"
+        mkdir /LSDTopoTools/Git_projects
+      else 
+        echo "I found a Git_projects folder."
+    fi
+    
+    # Check if parent directories exist, part 2
+    if ! [ -d /LSDTopoTools/Topographic_projects ]
+      then
+        echo "Need to make the Topographic projects folder"
+        mkdir /LSDTopoTools/Topographic_projects
+      else 
+        echo "I found a Topographic_projects folder."
+    fi 
+    
+    # Download the setup tool
+    if [ -f /LSDTopoTools/LSDTopoToolsSetup.py ]
+      then
+    	wget -P /LSDTopoTools/ https://raw.githubusercontent.com/LSDtopotools/LSDAutomation/master/LSDTopoToolsSetup.py
+    fi
+    
+    # Run setup
+    #python /LSDTopoTools/LSDTopoToolsSetup.py -id 0
+
+    
+
+    # check if the example dataset files have been cloned
+    if [ -f /LSDTopoTools/Topographic_projects/Test_data/Mandakini.bil ]
+      then
+        echo "Example data exists, updating."
+        git --work-tree=/LSDTopoTools/Topographic_projects/Test_data --git-dir=/LSDTopoTools/Topographic_projects/Test_data/.git  pull origin master
+      else
+        echo "cloning the analysis packages"
+        git clone https://github.com/LSDtopotools/LSDTT_vagrant_datasets.git /LSDTopoTools/Topographic_projects/Test_data
+    fi  
+      
+    # check if the files have been cloned
+    if [ -f /LSDTopoTools/Git_projects/LSDTopoTools_AnalysisDriver/LSDRaster.cpp ]
+      then
+        echo "LSDTopoTools_AnalysisDriver exists, updating."
+        git --work-tree=/LSDTopoTools/Git_projects/LSDTopoTools_AnalysisDriver --git-dir=/LSDTopoTools/Git_projects/LSDTopoTools_AnalysisDriver/.git  pull origin master
+      else
+        echo "cloning the analysis packages"
+        git clone https://github.com/LSDtopotools/LSDTopoTools_AnalysisDriver.git /LSDTopoTools/Git_projects/LSDTopoTools_AnalysisDriver
+    fi
+
+    if [ -f /LSDTopoTools/Git_projects/LSDTopoTools_CRNBasinwide/LSDRaster.cpp ]
+      then
+        echo "LSDTopoTools_CRNBasinwide exists, updating"
+        git --work-tree=/LSDTopoTools/Git_projects/LSDTopoTools_CRNBasinwide --git-dir=/LSDTopoTools/Git_projects/LSDTopoTools_CRNBasinwide/.git pull origin master
+      else
+        echo "Cloning the cosmogenic packages"
+        git clone https://github.com/LSDtopotools/LSDTopoTools_CRNBasinwide.git /LSDTopoTools/Git_projects/LSDTopoTools_CRNBasinwide 
+    fi
+
+    if [ -f /LSDTopoTools/Git_projects/LSDTopoTools_ChiMudd2014/LSDRaster.cpp ]
+      then
+        echo "LSDTopoTools_ChiMudd2014 exists, updating"
+        git --work-tree=/LSDTopoTools/Git_projects/LSDTopoTools_ChiMudd2014 --git-dir=/LSDTopoTools/Git_projects/LSDTopoTools_ChiMudd2014/.git pull origin master
+      else
+        echo "Cloning the chi analysis packages"
+        git clone https://github.com/LSDtopotools/LSDTopoTools_ChiMudd2014.git /LSDTopoTools/Git_projects/LSDTopoTools_ChiMudd2014 
+    fi
+
+    if [ -f /LSDTopoTools/Git_projects/LSDTopoTools_ChannelExtraction/LSDRaster.cpp ]
+      then
+        echo "LSDTopoTools_ChannelExtraction exists, updating"
+        git --work-tree=/LSDTopoTools/Git_projects/LSDTopoTools_ChannelExtraction --git-dir=/LSDTopoTools/Git_projects/LSDTopoTools_ChannelExtraction/.git pull origin master
+      else
+        echo "Cloning the channel extraction packages"
+        git clone https://github.com/LSDtopotools/LSDTopoTools_ChannelExtraction.git /LSDTopoTools/Git_projects/LSDTopoTools_ChannelExtraction 
+    fi
+   
+
+  SHELL
+end
