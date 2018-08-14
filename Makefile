@@ -18,3 +18,5 @@ run: build
 	docker run \
 		${ENV} \
 		-it lsd-topotools:latest
+
+		

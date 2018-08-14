@@ -10,4 +10,6 @@ VOLUME [ "/LSDTopoTools" ]
 
 WORKDIR /LSDTopoTools
 
+COPY my-fake-data.txt /LSDTopoTools/my-fake-data.txt
+
 CMD [ "/bin/bash" ]
