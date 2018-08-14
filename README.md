@@ -1,3 +1,3 @@
 # LSDTopoTools as a Docker Container
 
-How to use. Instructions assume a max OSX device.
+Docker image is based off [this repo](https://github.com/AaronFriel/LSDTopoTools)
