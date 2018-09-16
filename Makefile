@@ -13,7 +13,7 @@ bash:
 	docker run \
 		-it lsd-topotools:latest bash
 
-run: build
+run:
 	docker run \
 		-it lsd-topotools:latest
 

@@ -75,3 +75,12 @@ if [ -f /LSDTopoTools/Git_projects/LSDTopoTools_ChannelExtraction/LSDRaster.cpp 
     echo "Cloning the channel extraction packages"
     git clone https://github.com/LSDtopotools/LSDTopoTools_ChannelExtraction.git /LSDTopoTools/Git_projects/LSDTopoTools_ChannelExtraction
 fi
+
+if [ -f /LSDTopoTools/Git_projects/LSDTopoTools_FloodplainTerraceExtraction/LSDRaster.cpp ]
+  then
+    echo "LSDTopoTools_FloodplainTerraceExtraction exists, updating"
+    git --work-tree=/LSDTopoTools/Git_projects/LSDTopoTools_FloodplainTerraceExtraction --git-dir=/LSDTopoTools/Git_projects/LSDTopoTools_FloodplainTerraceExtraction/.git pull origin master
+  else
+    echo "Cloning the channel extraction packages"
+    git clone https://github.com/LSDtopotools/LSDTopoTools_FloodplainTerraceExtraction.git /LSDTopoTools/Git_projects/LSDTopoTools_FloodplainTerraceExtraction
+fi
